@@ -1,0 +1,130 @@
+A report that describes:
+(a) the structure of your code, including any major interfaces that you implemented,
+(b) the RPC interface your participants expose to the coordinator,
+(c) how failures are detected, and if failures do occur, how they are reflected to clients via the RPC interface
+that the coordinator exposes,
+(d) test cases you have explored, how to repeat these test cases, and sample input/output.
+
+Project #04 - Two Phase Commit Protocol
+Extension Project 2 to support two-phase commit over replicated file servers
+
+NAme - Vinayak Subhash Pingale
+Email - vpingal1@binghamton.edu
+
+Structure Of The Code
+===========================================================================================================================================================================
+A plain structure has been made with describing and taking inputs from the previous apache thrift projects .
+Proper implementation of TWO phase commit protocol with participants and the coordinators.
+
+Uses of Application development tools : Data Access layer using SQLLite. A server less Database has been created for smooth operations.
+Java Cordinator will come to know about the existences of replicas
+Java Particpant will act as a replicas for this project
+Java Client which will communicate with the cordinator to perform the operations.
+
+// Java Participant and the cordinaotr handler 
+This will act as the interface for the application.
+
+
+RPC interface of the Participant
+===========================================================================================================================================================================
+
+service FileStore_Participant {
+
+  StatusReport_ParticipantTPCMMessage writeFile(1: RFile rFile, 2: StatusReport_ParticipantTPCMMessage statusReport_ParticipantTPCMMessage)
+    throws (1: SystemException systemException),
+  
+  RFile readFile(1: string filename)
+    throws (1: SystemException systemException),
+	
+  StatusReport_ParticipantTPCMMessage deleteFile(1: string filename, 2: StatusReport_ParticipantTPCMMessage statusReport_ParticipantTPCMMessage)
+    throws (1: SystemException systemException),
+}
+
+how failures are detected, and if failures do occur, how they are reflected to clients via the RPC interface
+that the coordinator exposes,
+===========================================================================================================================================================================
+
+Created a crash scenario for both the cordinators and the participants.
+WHen they recover the log the database will be communicated to perform the operations and again the request will be made and sent to the cordinator and vice versa in case they fail.
+
+Sample Output
+
+--------------------------
+
+CoordinatorInfo [name=cordinator, ip=localhost, port=9090]
+logInfoRecovery  ---- []
+logInfoRecovery  ---- []
+Starting the simple Participant Server... portNumber : 9091 replicaDetails : replica1
+Synch LogInfoParticipant [operation_Type=null, fileName=null, status=null, content_File=null, transaction_Info=0]
+Inserting into the database true
+===================================================================================================
+Perform the Write Operation for the Participant - [Transaction ID: 1][ Filename: in1.txt] [Transaction Message from Cordinator:  VOTE_REQUEST]
+1. VOTE_COMMIT
+2. VOTE_ABORT
+3. VOTE_COMMIT AND CRASH
+===================================================================================================
+Please Enter you choice as 1 | 2 | 3 : 
+2
+A message has been prepared for VOTE_ABORT and has been sent to the Cordinator  [Transaction ID: 1]
+A message has been prepared for VOTE_ABORT and has been sent to the Cordinator  [Transaction ID: 1]
+Synch LogInfoParticipant [operation_Type=WRITE, fileName=in1.txt, status=VOTE_ABORT, content_File=Performancefgh, transaction_Info=1]
+Inserting into the database false
+===================================================================================================
+Perform the Write Operation for the Participant - [Transaction ID: 2][ Filename: in1.txt] [Transaction Message from Cordinator:  VOTE_REQUEST]
+1. VOTE_COMMIT
+2. VOTE_ABORT
+3. VOTE_COMMIT AND CRASH
+===================================================================================================
+Please Enter you choice as 1 | 2 | 3 : 
+A message has been prepared for null and has been sent to the Cordinator  [Transaction ID: 2]
+Synch LogInfoParticipant [operation_Type=WRITE, fileName=in1.txt, status=VOTE_ABORT, content_File=Performancefgh, transaction_Info=1]
+Inserting into the database false
+A message has been prepared for null and has been sent to the Cordinator  [Transaction ID: 3]
+Synch LogInfoParticipant [operation_Type=WRITE, fileName=in1.txt, status=VOTE_ABORT, content_File=Performancefgh, transaction_Info=1]
+Inserting into the database false
+A message has been prepared for null and has been sent to the Cordinator  [Transaction ID: 4]
+Synch LogInfoParticipant [operation_Type=WRITE, fileName=in1.txt, status=VOTE_ABORT, content_File=Performancefgh, transaction_Info=1]
+Inserting into the database false
+A message has been prepared for null and has been sent to the Cordinator  [Transaction ID: 5]
+
+
+
+
+
+CoordinatorInfo [name=cordinator, ip=localhost, port=9090]
+logInfoRecovery  ---- []
+logInfoRecovery  ---- []
+Starting the simple Participant Server... portNumber : 9092 replicaDetails : replica2
+Synch LogInfoParticipant [operation_Type=null, fileName=null, status=null, content_File=null, transaction_Info=0]
+Inserting into the database true
+===================================================================================================
+Perform the Write Operation for the Participant - [Transaction ID: 1][ Filename: in1.txt] [Transaction Message from Cordinator:  VOTE_REQUEST]
+1. VOTE_COMMIT
+2. VOTE_ABORT
+3. VOTE_COMMIT AND CRASH
+===================================================================================================
+Please Enter you choice as 1 | 2 | 3 : 
+1
+A message has been prepared for VOTE_COMMIT and has been sent to the Cordinator  [Transaction ID: 1]
+A message has been prepared for VOTE_COMMIT and has been sent to the Cordinator  [Transaction ID: 1]
+Synch LogInfoParticipant [operation_Type=WRITE, fileName=in1.txt, status=VOTE_COMMIT, content_File=Performancefgh, transaction_Info=1]
+Inserting into the database false
+A message has been prepared for VOTE_ABORT and has been sent to the Cordinator  [Transaction ID: 2]
+A message has been prepared for VOTE_ABORT and has been sent to the Cordinator  [Transaction ID: 2]
+Synch LogInfoParticipant [operation_Type=WRITE, fileName=in1.txt, status=VOTE_ABORT, content_File=Performancefgh, transaction_Info=2]
+Inserting into the database false
+A message has been prepared for VOTE_ABORT and has been sent to the Cordinator  [Transaction ID: 3]
+A message has been prepared for VOTE_ABORT and has been sent to the Cordinator  [Transaction ID: 3]
+Synch LogInfoParticipant [operation_Type=WRITE, fileName=in1.txt, status=VOTE_ABORT, content_File=Performancefgh, transaction_Info=3]
+Inserting into the database false
+A message has been prepared for VOTE_ABORT and has been sent to the Cordinator  [Transaction ID: 4]
+A message has been prepared for VOTE_ABORT and has been sent to the Cordinator  [Transaction ID: 4]
+Synch LogInfoParticipant [operation_Type=WRITE, fileName=in1.txt, status=VOTE_ABORT, content_File=Performancefgh, transaction_Info=4]
+Inserting into the database false
+A message has been prepared for VOTE_ABORT and has been sent to the Cordinator  [Transaction ID: 5]
+A message has been prepared for VOTE_ABORT and has been sent to the Cordinator  [Transaction ID: 5]
+
+
+
+
+
